@@ -153,8 +153,7 @@ def get_and_show(file_path, show=False):
 
 
 def tag_dataframe_by_time(data, timestamp_column, start_time, end_time, value, tag_column):
-
-    # Converte il tempo (minuti, secondi, millisecondi) in millisecondi totali
+    
     start_ms = (start_time[0] * 60 * 1000) + (start_time[1] * 1000) + start_time[2]
     end_ms = (end_time[0] * 60 * 1000) + (end_time[1] * 1000) + end_time[2]
     
@@ -201,7 +200,20 @@ def evaluate(model, test_features, test_labels):
 def custom_f1(y_true, y_pred):
     return f1_score(y_true, y_pred, average='binary')
 
-def split_scaler(file_path, percent = 0.6):
+def split_data_by_time(data, timestamp_column, split_time):
+    
+    split_time = (split_time[0] * 60 * 1000) + (split_time[1] * 1000) + split_time[2]
+    
+    if timestamp_column not in data.columns:
+        raise ValueError(f"La colonna '{timestamp_column}' non esiste nei dati.")
+
+    # Filtra i dati in base al tempo di split
+    training_data = data[data[timestamp_column] <= split_time]
+    test_data = data[data[timestamp_column] > split_time]
+
+    return training_data, test_data
+
+def split_scaler(file_path, time = (4, 0, 0)):
     df = pd.read_csv(file_path)
 
     columns_to_scale = ['GyroX', 'GyroY', 'GyroZ', 'MagX', 'MagY', 'MagZ', 'AngX', 'AngY', 'AngZ', 'AccX', 'AccY', 'AccZ']
@@ -210,13 +222,26 @@ def split_scaler(file_path, percent = 0.6):
     df_scaled = df.copy()
     df_scaled[columns_to_scale] = scaler.fit_transform(df[columns_to_scale])
         
-    train_data, test_data = train_test_split(df_scaled, test_size=percent, random_state=42)
+    train_data, test_data = split_data_by_time(df_scaled, 'Timestamp', time)
     
         
     y_train = train_data['Tag']
-    x_train = train_data[['AccX', 'AccY', 'AccZ']]
+    x_train = train_data[['AccX', 'AccY', 'AccZ', 'AngY', 'AngX']]
     
     y_test = test_data['Tag']
-    x_test = test_data[['AccX', 'AccY', 'AccZ']]
+    x_test = test_data[['AccX', 'AccY', 'AccZ', 'AngY', 'AngX']]
 
     return x_train, y_train, x_test, y_test
+
+def remove_data_in_range(data, timestamp_column, start_time, end_time):
+
+    start_ms = (start_time[0] * 60 * 1000) + (start_time[1] * 1000) + start_time[2]
+    end_ms = (end_time[0] * 60 * 1000) + (end_time[1] * 1000) + end_time[2]
+    
+    if timestamp_column not in data.columns:
+        raise ValueError(f"La colonna '{timestamp_column}' non esiste nei dati.")
+
+    # Filtrare i dati che non rientrano nel range
+    filtered_df = data[(data[timestamp_column] < start_ms) | (data[timestamp_column] > end_ms)]
+
+    return filtered_df
