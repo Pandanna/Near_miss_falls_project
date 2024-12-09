@@ -213,7 +213,7 @@ def split_data_by_time(data, timestamp_column, split_time):
 
     return training_data, test_data
 
-def split_scaler(file_path, time = (4, 0, 0)):
+def split_scaler(file_path, time = (5, 0, 0)):
     df = pd.read_csv(file_path)
 
     columns_to_scale = ['GyroX', 'GyroY', 'GyroZ', 'MagX', 'MagY', 'MagZ', 'AngX', 'AngY', 'AngZ', 'AccX', 'AccY', 'AccZ']
