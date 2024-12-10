@@ -21,9 +21,6 @@ def correct_json(file_path):
             f.write(corrected)
 
 
-from bokeh.plotting import figure, show
-from bokeh.models import ColumnDataSource, BoxAnnotation
-
 def plot_time_data(data, time_column, value_columns, tag_column='Tag', time_unit='second', 
                    xlabel='Time', ylabel='Values', title='Time Series Plot'):
     
@@ -213,7 +210,7 @@ def split_data_by_time(data, timestamp_column, split_time):
 
     return training_data, test_data
 
-def split_scaler(file_path, time = (5, 0, 0)):
+def split_scaler(file_path, time = (4, 0, 0)):
     df = pd.read_csv(file_path)
 
     columns_to_scale = ['GyroX', 'GyroY', 'GyroZ', 'MagX', 'MagY', 'MagZ', 'AngX', 'AngY', 'AngZ', 'AccX', 'AccY', 'AccZ']
