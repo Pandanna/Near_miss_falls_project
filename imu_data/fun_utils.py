@@ -223,10 +223,10 @@ def split_scaler(file_path, time = (4, 0, 0)):
     
         
     y_train = train_data['Tag']
-    x_train = train_data[['AccX', 'AccY', 'AccZ', 'AngY', 'AngX']]
+    x_train = train_data[['AccX', 'AccY', 'AccZ', 'AngY', 'AngX', 'GyroX', 'GyroY', 'GyroZ']]
     
     y_test = test_data['Tag']
-    x_test = test_data[['AccX', 'AccY', 'AccZ', 'AngY', 'AngX']]
+    x_test = test_data[['AccX', 'AccY', 'AccZ', 'AngY', 'AngX', 'GyroX', 'GyroY', 'GyroZ']]
 
     return x_train, y_train, x_test, y_test
 
